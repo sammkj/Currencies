@@ -12,9 +12,9 @@ defmodule Currencies.MinorUnit do
   defstruct [:name, :display, :size_to_unit, :symbol]
 
   @type t :: %__MODULE__{
-              name: String.t,
-              display: String.t,
-              size_to_unit: integer,
-              symbol: String.t
-            }
+          name: binary(),
+          display: binary(),
+          size_to_unit: integer(),
+          symbol: binary()
+        }
 end

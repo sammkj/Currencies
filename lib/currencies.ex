@@ -3,28 +3,13 @@ defmodule Currencies do
   Specialized functions that return Currencies.
   """
 
-  alias Currencies.Currency
-  alias Currencies.CentralBank
-  alias Currencies.Representations
-  alias Currencies.MinorUnit
+  # -- Load countries from JSON files once on compile time ---
 
-  # Pre-loads currency data at compile time
-  if Code.ensure_compiled(Poison) do
-    data_path = fn (path) ->
-      Path.join("data", path) |> Path.expand(__DIR__)
-    end
+  # Ensure :yamerl is running
+  Application.start(:jason)
 
-    load_currency = fn(currency_code) ->
-        data_path.(Path.join("currencies", String.downcase(currency_code) <> ".json"))
-          |> File.read!
-          |> Poison.decode!(as: %Currency{representations: %Representations{}, minor_unit: %MinorUnit{}, central_bank: %CentralBank{}})
-    end
+  @currencies Currencies.Loader.load()
 
-    @currencies data_path.("currencies.json")
-      |> File.read!
-      |> Poison.decode!(as: [ %Currency{} ])
-      |> Enum.map(&(load_currency.(&1.code)))
-  end
   @doc """
   Returns all currencies matching the given predicate
 
@@ -44,6 +29,7 @@ defmodule Currencies do
 
   """
   def filter([]), do: []
+
   def filter(predicate) when is_function(predicate, 1) do
     all() |> Enum.filter(predicate)
   end
@@ -93,12 +79,13 @@ defmodule Currencies do
       iso_numeric: "051",
       minor_unit: %Currencies.MinorUnit{display: "1/100", name: "Luma",
       size_to_unit: 100, symbol: nil}, name: "Armenia Dram", nicknames: nil,
-      representations: %Currencies.Representations{html: nil, unicode_decimal: nil},
+      representations: nil,
       symbol: nil, users: ["Armenia"]}, :not_found]
   """
-  def all(currency_codes_or_iso_numeric_codes) when is_list(currency_codes_or_iso_numeric_codes) do
+  def all(currency_codes_or_iso_numeric_codes)
+      when is_list(currency_codes_or_iso_numeric_codes) do
     currency_codes_or_iso_numeric_codes
-    |> Enum.dedup
+    |> Enum.dedup()
     |> Enum.map(&get/1)
   end
 
@@ -159,18 +146,21 @@ defmodule Currencies do
       :not_found
   """
   def get(currency_code) when is_atom(currency_code) do
-   currency_code
-    |> Atom.to_string
-    |> get
+    currency_code
+    |> Atom.to_string()
+    |> get()
   end
+
   def get(currency_code) when is_binary(currency_code) do
-      filter(&(String.downcase(&1.code) === String.downcase(currency_code)))
-        |> Enum.at(0, :not_found)
+    filter(&(String.downcase(&1.code) === String.downcase(currency_code)))
+    |> Enum.at(0, :not_found)
   end
+
   def get(iso_numeric) when is_integer(iso_numeric) do
-      filter(&(String.to_integer(&1.iso_numeric||"-101") === iso_numeric))
-        |> Enum.at(0, :not_found)
+    filter(&(String.to_integer(&1.iso_numeric || "-101") === iso_numeric))
+    |> Enum.at(0, :not_found)
   end
+
   def get(_param) do
     :not_found
   end
@@ -212,7 +202,9 @@ defmodule Currencies do
     currency = get(currency_code)
 
     case currency do
-      :not_found -> :not_found
+      :not_found ->
+        :not_found
+
       _ ->
         case currency.minor_unit do
           nil -> :not_found
@@ -258,7 +250,9 @@ defmodule Currencies do
     currency = get(currency_code)
 
     case currency do
-      :not_found -> :not_found
+      :not_found ->
+        :not_found
+
       _ ->
         case currency.central_bank do
           nil -> :not_found
@@ -266,5 +260,4 @@ defmodule Currencies do
         end
     end
   end
-
 end

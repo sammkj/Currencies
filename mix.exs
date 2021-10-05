@@ -1,18 +1,19 @@
 defmodule Currencies.Mixfile do
+  @moduledoc false
+
   use Mix.Project
 
+  @source_url "https://github.com/sammkj/Currencies"
+  @version "1.0.0"
+
   def project do
-    [app: :currencies,
-     version: "0.5.1",
-     elixir: "~> 1.3",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps(),
-     description: description(),
-     package: package(),
-     docs: [extras: ["README.md"]],
-     test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+    [
+      app: :currencies,
+      version: @version,
+      elixir: "~> 1.3",
+      deps: deps(),
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -20,37 +21,37 @@ defmodule Currencies.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger, :jason]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
-    [{:poison, "~> 2.0", only: [:dev, :test]},
+    [
+      {:jason, "~> 1.2.2"},
       {:earmark, ">= 0.0.0", only: :dev},
-      {:ex_doc, ">= 0.0.0", only: :dev},
-      {:excoveralls, "~> 0.5", only: :test}]
+      {:ex_doc, ">= 0.0.0", only: :dev}
+    ]
   end
 
-  defp description do
-    """
-    Currencies is a collection of all sorts of useful information for every currency in the ISO 4217 standard.
-    """
+  defp docs do
+    [
+      extras: [
+        "LICENSE.md": [title: "License"],
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      formatters: ["html"]
+    ]
   end
 
   def package do
-    [ name: :currencies,
-      files: ["lib", "mix.exs", "README*", "LICENSE*"],
-      maintainers: ["Kriztian Jake Sta. Teresa"],
+    [
+      description:
+        "Currencies is a collection of all sorts of useful information for every currency in the ISO 4217 standard.",
+      maintainers: ["Kok J Sam"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/JakeStaTeresa/Currencies"},
+      links: %{"Github" => "https://github.com/sammkj/Currencies"}
     ]
   end
 end

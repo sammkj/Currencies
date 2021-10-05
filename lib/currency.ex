@@ -5,6 +5,7 @@ defmodule Currencies.Currency do
   It contains the following fields:
    * `:code` - the currency code
    * `:name` - the name of the curency
+   * `:description` - the description of the currency
    * `:symbol` - the displayable currency symbol
    * `:iso_numeric` - the iso numeric value of the currency
    * `:disambiguate_symbol` - the value used to distinguish currency between other currencies having the same
@@ -18,19 +19,33 @@ defmodule Currencies.Currency do
    * `:users` - contains places or countries using the currency
   """
 
-  defstruct [:code, :name, :symbol, :iso_numeric, :disambiguate_symbol, :alternate_symbols, :representations, :minor_unit, :central_bank, :nicknames, :users]
+  defstruct [
+    :code,
+    :name,
+    :description,
+    :symbol,
+    :iso_numeric,
+    :disambiguate_symbol,
+    :alternate_symbols,
+    :representations,
+    :minor_unit,
+    :central_bank,
+    :nicknames,
+    :users
+  ]
 
   @type t :: %__MODULE__{
-            code: String.t,
-            name: String.t,
-            symbol: String.t,
-            iso_numeric: String.t,
-            disambiguate_symbol: String.t,
-            alternate_symbols: [String.t],
-            representations: Currencies.Representations.t,
-            minor_unit: Currencies.MinorUnit.t,
-            central_bank: Currencies.CentralBank.t,
-            nicknames: [String.t],
-            users: [String.t]
-          }
+          code: binary(),
+          name: binary(),
+          description: binary(),
+          symbol: binary(),
+          iso_numeric: binary(),
+          disambiguate_symbol: binary(),
+          alternate_symbols: [binary()],
+          representations: Currencies.Representations.t(),
+          minor_unit: Currencies.MinorUnit.t(),
+          central_bank: Currencies.CentralBank.t(),
+          nicknames: [binary()],
+          users: [binary()]
+        }
 end
